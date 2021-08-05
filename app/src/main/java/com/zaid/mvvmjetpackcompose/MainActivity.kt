@@ -3,36 +3,48 @@ package com.zaid.mvvmjetpackcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.rememberNavController
 import com.zaid.mvvmjetpackcompose.ui.theme.MVVMAppWithJetpackComposeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MVVMAppWithJetpackComposeTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "country_list_activity") {
+                    composable("country_list_activity") {
+
+                    }
+                    composable("country_info_activity/{flagName}/{dominantColor}", arguments = listOf(
+                        navArgument("flagName") {
+                            type = NavType.StringType
+                        },
+                        navArgument("dominantColor") {
+                            type = NavType.IntType
+                        }
+                    )) {
+                        val flagName = remember {
+                            it.arguments?.getString("flagName")
+                        }
+
+                        val dominantColor = remember {
+                            val color = it.arguments?.getInt("dominantColor")
+                            color?.let {Color(it)}?:Color.White
+                        }
+                    }
                 }
+
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MVVMAppWithJetpackComposeTheme {
-        Greeting("Android")
-    }
-}
