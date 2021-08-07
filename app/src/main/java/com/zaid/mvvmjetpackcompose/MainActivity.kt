@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.zaid.mvvmjetpackcompose.ui.composable.FlagListScreen
 import com.zaid.mvvmjetpackcompose.ui.theme.MVVMAppWithJetpackComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "country_list_activity") {
                     composable("country_list_activity") {
-
+                        FlagListScreen(navController = navController)
                     }
                     composable("country_info_activity/{flagName}/{dominantColor}", arguments = listOf(
                         navArgument("flagName") {
