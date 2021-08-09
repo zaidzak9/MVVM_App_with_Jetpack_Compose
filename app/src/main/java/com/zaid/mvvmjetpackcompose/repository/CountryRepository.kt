@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class CountryRepository @Inject constructor(
     private val countriesApi: CountriesApi
 ) {
-    suspend fun getCountriesList() :Resource<CountriesMainItem>{
+    suspend fun getCountriesList() :Resource<CountriesMain>{
         return try {
             val response = countriesApi.getCountiesList()
             if (response.isSuccessful) {

@@ -4,10 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
@@ -15,23 +14,17 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.request.ImageRequest
-import com.google.accompanist.coil.CoilImage
+import com.google.accompanist.coil.rememberCoilPainter
 import com.zaid.mvvmjetpackcompose.R
 import com.zaid.mvvmjetpackcompose.data.remote.responses.CountriesMainItem
 import com.zaid.mvvmjetpackcompose.ui.CountryViewModel
@@ -63,6 +56,8 @@ fun FlagListScreen(
             ) {
 
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            CountryList(navController = navController)
         }
     }
 }
@@ -75,10 +70,6 @@ fun SearchBar(
 ) {
     var text by remember {
         mutableStateOf("")
-    }
-
-    var isHintDisplayed by remember {
-        mutableStateOf(hint != "")
     }
 
     Box(modifier = modifier) {
@@ -103,6 +94,39 @@ fun SearchBar(
                 unfocusedIndicatorColor = Color.Transparent
             )
         )
+    }
+
+}
+
+
+@Composable
+fun CountryList(
+    navController: NavController,
+    viewModel: CountryViewModel = hiltViewModel()
+) {
+    val countryList by remember { viewModel.countriesList }
+    val isLoading by remember { viewModel.isloading }
+
+    println("JPC_UI - $countryList")
+
+    LazyColumn(contentPadding = PaddingValues(16.dp)) {
+        val itemCount = if(countryList.size % 2 == 0) {
+            countryList.size / 2
+        } else {
+            countryList.size / 2 + 1
+        }
+        items(itemCount) {
+            FlagRow(rowIndex = it, entries = countryList, navController = navController)
+        }
+    }
+
+    Box(
+        contentAlignment = Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if(isLoading) {
+            CircularProgressIndicator(color = MaterialTheme.colors.primary)
+        }
     }
 
 }
@@ -140,28 +164,35 @@ fun FlagIntro(
             }
     ) {
         Column {
-            CoilImage(
-                request = ImageRequest.Builder(LocalContext.current)
-                    .data(countriesMainItem.flag)
-                    .target {
-                        countryViewModel.calcDominantColor(it) { color ->
-                            dominantColor = color
-                        }
-                    }
-                    .build(),
+            Image(
+                painter = rememberCoilPainter(request = countriesMainItem.flag),
                 contentDescription = countriesMainItem.name,
-                fadeIn = true,
                 modifier = Modifier
                     .size(120.dp)
                     .align(CenterHorizontally)
-            ) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier.scale(0.5f)
-                )
-            }
+            )
+//            CoilImage(
+//                request = ImageRequest.Builder(LocalContext.current)
+//                    .data(countriesMainItem.flag)
+//                    .target {
+//                        countryViewModel.calcDominantColor(it) { color ->
+//                            dominantColor = color
+//                        }
+//                    }
+//                    .build(),
+//                contentDescription = countriesMainItem.name,
+//                fadeIn = true,
+//                modifier = Modifier
+//                    .size(120.dp)
+//                    .align(CenterHorizontally)
+//            ) {
+//                CircularProgressIndicator(
+//                    color = MaterialTheme.colors.primary,
+//                    modifier = Modifier.scale(0.5f)
+//                )
+//            }
             Text(
-                text = countriesMainItem.name,
+                text = countriesMainItem.name!!,
                 fontFamily = RobotoCondensed,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
