@@ -10,20 +10,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.ImageLoader
 import com.google.accompanist.coil.rememberCoilPainter
 import com.zaid.mvvmjetpackcompose.R
 import com.zaid.mvvmjetpackcompose.data.remote.responses.CountriesMainItem
@@ -32,7 +36,8 @@ import com.zaid.mvvmjetpackcompose.ui.theme.RobotoCondensed
 
 @Composable
 fun FlagListScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: CountryViewModel = hiltViewModel()
 ) {
     Surface(
         color = MaterialTheme.colors.background,
@@ -54,7 +59,7 @@ fun FlagListScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-
+                viewModel.searchCountriesList(it)
             }
             Spacer(modifier = Modifier.height(16.dp))
             CountryList(navController = navController)
@@ -159,38 +164,20 @@ fun FlagIntro(
             )
             .clickable {
                 navController.navigate(
-                    "country_info_activity/${dominantColor.toArgb()}/${countriesMainItem.name}"
+                    "country_info_activity/${countriesMainItem.name}"
                 )
             }
     ) {
         Column {
             Image(
-                painter = rememberCoilPainter(request = countriesMainItem.flag),
+                painter = rememberCoilPainter(
+                    request = "https://www.seekpng.com/png/full/207-2075410_icon-globe-globe-travel-icon-png.png",
+                ),
                 contentDescription = countriesMainItem.name,
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(128.dp)
                     .align(CenterHorizontally)
             )
-//            CoilImage(
-//                request = ImageRequest.Builder(LocalContext.current)
-//                    .data(countriesMainItem.flag)
-//                    .target {
-//                        countryViewModel.calcDominantColor(it) { color ->
-//                            dominantColor = color
-//                        }
-//                    }
-//                    .build(),
-//                contentDescription = countriesMainItem.name,
-//                fadeIn = true,
-//                modifier = Modifier
-//                    .size(120.dp)
-//                    .align(CenterHorizontally)
-//            ) {
-//                CircularProgressIndicator(
-//                    color = MaterialTheme.colors.primary,
-//                    modifier = Modifier.scale(0.5f)
-//                )
-//            }
             Text(
                 text = countriesMainItem.name!!,
                 fontFamily = RobotoCondensed,

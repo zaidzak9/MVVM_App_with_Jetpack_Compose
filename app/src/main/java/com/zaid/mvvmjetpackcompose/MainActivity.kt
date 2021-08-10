@@ -25,18 +25,14 @@ class MainActivity : ComponentActivity() {
                     composable("country_list_activity") {
                         FlagListScreen(navController = navController)
                     }
-                    composable("country_info_activity/{flagName}/{dominantColor}", arguments = listOf(
+                    composable("country_info_activity/{flagName}", arguments = listOf(
                         navArgument("flagName") {
                             type = NavType.StringType
-                        },
-                        navArgument("dominantColor") {
-                            type = NavType.IntType
                         }
                     )) {
                         val flagName = remember {
                             it.arguments?.getString("flagName")
                         }
-
                         val dominantColor = remember {
                             val color = it.arguments?.getInt("dominantColor")
                             color?.let {Color(it)}?:Color.White
