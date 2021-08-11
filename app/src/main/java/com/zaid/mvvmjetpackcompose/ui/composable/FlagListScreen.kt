@@ -39,6 +39,7 @@ fun FlagListScreen(
     navController: NavController,
     viewModel: CountryViewModel = hiltViewModel()
 ) {
+    viewModel.getCountriesList()
     Surface(
         color = MaterialTheme.colors.background,
         modifier = Modifier.fillMaxSize()
@@ -163,6 +164,8 @@ fun FlagIntro(
                 )
             )
             .clickable {
+                var countryInfo = arrayListOf<CountriesMainItem>()
+                countryInfo.addAll(listOf(countriesMainItem))
                 navController.navigate(
                     "country_info_activity/${countriesMainItem.name}"
                 )

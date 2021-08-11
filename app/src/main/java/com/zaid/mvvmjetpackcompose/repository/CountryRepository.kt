@@ -27,4 +27,19 @@ class CountryRepository @Inject constructor(
             return Resource.Error("Something went wrong : $e")
         }
     }
+
+    suspend fun getCountry(countryName : String) :Resource<CountriesMain>{
+        return try {
+            val response = countriesApi.getCountry(countryName)
+            if (response.isSuccessful) {
+                response.body()?.let { response ->
+                    return@let Resource.Success(response)
+                } ?: Resource.Error("An unknown error occurred")
+            } else {
+                Resource.Error("An unknown error occurred")
+            }
+        }catch (e : Exception){
+            return Resource.Error("Something went wrong : $e")
+        }
+    }
 }

@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.zaid.mvvmjetpackcompose.data.remote.responses.CountriesMainItem
+import com.zaid.mvvmjetpackcompose.ui.composable.FlagDetailScreen
 import com.zaid.mvvmjetpackcompose.ui.composable.FlagListScreen
 import com.zaid.mvvmjetpackcompose.ui.theme.MVVMAppWithJetpackComposeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,10 +35,7 @@ class MainActivity : ComponentActivity() {
                         val flagName = remember {
                             it.arguments?.getString("flagName")
                         }
-                        val dominantColor = remember {
-                            val color = it.arguments?.getInt("dominantColor")
-                            color?.let {Color(it)}?:Color.White
-                        }
+                        FlagDetailScreen(navController = navController, flagName = flagName?:"")
                     }
                 }
 

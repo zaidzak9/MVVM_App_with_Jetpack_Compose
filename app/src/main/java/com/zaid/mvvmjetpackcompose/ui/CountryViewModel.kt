@@ -38,11 +38,6 @@ class CountryViewModel @Inject constructor(
     private var isSearching = mutableStateOf(false)
     private var isNotSearching = true
 
-
-    init {
-        getCountriesList()
-    }
-
     fun searchCountriesList(query:String){
         val listToSearch = if(isNotSearching) {
             countriesList.value
@@ -71,10 +66,29 @@ class CountryViewModel @Inject constructor(
     }
 
 
-    private fun getCountriesList(){
+    fun getCountriesList(){
         viewModelScope.launch {
             isloading.value = true
             when(val result = repository.getCountriesList()){
+                is Resource.Success ->{
+                    println("JPC VM_SUCCESS : ${result.data!![0]}")
+                    countriesList.value = result.data
+                    loadError.value = ""
+                    isloading.value = false
+                }
+                is Resource.Error -> {
+                    println("JPC VM_ERROR : ${result.error}")
+                    loadError.value = result.error!!
+                    isloading.value = false
+                }
+            }
+        }
+    }
+
+    fun getCountry(countryName:String){
+        viewModelScope.launch {
+            isloading.value = true
+            when(val result = repository.getCountry(countryName)){
                 is Resource.Success ->{
                     println("JPC VM_SUCCESS : ${result.data!![0]}")
                     countriesList.value = result.data
